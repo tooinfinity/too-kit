@@ -21,12 +21,20 @@ export interface NavItem {
     icon?: LucideIcon | null;
     isActive?: boolean;
 }
+interface Locale {
+    code: string;
+    name: string;
+    url: string;
+}
 
 export interface SharedData {
     name: string;
     quote: { message: string; author: string };
     auth: Auth;
     ziggy: Config & { location: string };
+    locale: string;
+    locales: Record<string, Locale>;
+    translations: Record<string, Record<string, unknown>>;
     [key: string]: unknown;
 }
 
