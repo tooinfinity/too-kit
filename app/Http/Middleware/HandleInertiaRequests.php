@@ -6,6 +6,7 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use Override;
 use Tighten\Ziggy\Ziggy;
 
@@ -41,6 +42,31 @@ final class HandleInertiaRequests extends Middleware
     #[Override]
     public function share(Request $request): array
     {
+
+        /** @var array<string, array<string, mixed>>|null $supportedLocales */
+        $supportedLocales = config('laravellocalization.supportedLocales');
+
+        $currentLocale = LaravelLocalization::getCurrentLocale();
+
+        $locales = collect($supportedLocales ?? [])
+            ->map(function (array $locale, string $code): array {
+                $url = LaravelLocalization::getLocalizedURL($code, null, [], true);
+
+                return [
+                    'code' => $code,
+                    'name' => $locale['native'],
+                    'url' => $url !== false ? (string) $url : '',
+                ];
+            })
+            ->keyBy('code')
+            ->toArray();
+
+        $translations = [];
+        $translationFiles = ['messages', 'dashboard', 'auth', 'pagination', 'passwords', 'validation'];
+
+        foreach ($translationFiles as $file) {
+            $translations[$file] = trans($file, [], $currentLocale);
+        }
         /** @var array<string, mixed> $shared */
         $shared = [
             ...parent::share($request),
@@ -48,6 +74,9 @@ final class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'locale' => $currentLocale,
+            'locales' => $locales,
+            'translations' => $translations,
             'ziggy' => fn (): array => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),

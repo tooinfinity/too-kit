@@ -1,30 +1,41 @@
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { useTranslation } from '@/hooks/use-translation';
 import { cn } from '@/lib/utils';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { type PropsWithChildren } from 'react';
-
-const sidebarNavItems: NavItem[] = [
-    {
-        title: 'Profile',
-        href: '/settings/profile',
-        icon: null,
-    },
-    {
-        title: 'Password',
-        href: '/settings/password',
-        icon: null,
-    },
-    {
-        title: 'Appearance',
-        href: '/settings/appearance',
-        icon: null,
-    },
-];
+import { type PropsWithChildren, useMemo } from 'react';
 
 export default function SettingsLayout({ children }: PropsWithChildren) {
+    const { __ } = useTranslation();
+
+    const sidebarNavItems: NavItem[] = useMemo(
+        () => [
+            {
+                title: __('Profile'),
+                href: '/settings/profile',
+                icon: null,
+            },
+            {
+                title: __('Password'),
+                href: '/settings/password',
+                icon: null,
+            },
+            {
+                title: __('Appearance'),
+                href: '/settings/appearance',
+                icon: null,
+            },
+            {
+                title: __('Language'),
+                href: '/settings/language',
+                icon: null,
+            },
+        ],
+        [__],
+    );
+
     // When server-side rendering, we only render the layout on the client...
     if (typeof window === 'undefined') {
         return null;
@@ -34,7 +45,7 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
 
     return (
         <div className="px-4 py-6">
-            <Heading title="Settings" description="Manage your profile and account settings" />
+            <Heading title={__('Settings')} description={__('Manage your profile and account settings')} />
 
             <div className="flex flex-col space-y-8 lg:flex-row lg:space-y-0 lg:space-x-12">
                 <aside className="w-full max-w-xl lg:w-48">
