@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Enums\RoleEnum;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -43,5 +44,29 @@ final class UserFactory extends Factory
         return $this->state(fn (array $attributes): array => [
             'email_verified_at' => null,
         ]);
+    }
+
+    /**
+     * Indicate that the model should be an administrator.
+     */
+    public function administrator(): self
+    {
+        return $this->afterCreating(fn (User $user) => $user->assignRole(RoleEnum::ADMIN->value));
+    }
+
+    /**
+     * Indicate that the model should be a manager.
+     */
+    public function manager(): self
+    {
+        return $this->afterCreating(fn (User $user) => $user->assignRole(RoleEnum::MANAGER->value));
+    }
+
+    /**
+     * Indicate that the model should be a cashier.
+     */
+    public function cashier(): self
+    {
+        return $this->afterCreating(fn (User $user) => $user->assignRole(RoleEnum::CASHIER->value));
     }
 }

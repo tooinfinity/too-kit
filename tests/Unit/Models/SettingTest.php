@@ -5,9 +5,9 @@ declare(strict_types=1);
 use App\Models\Setting;
 
 test('to array', function () {
-    $user = Setting::factory()->create()->refresh();
+    $setting = Setting::factory()->create()->refresh();
 
-    expect(array_keys($user->toArray()))->toBe([
+    expect(array_keys($setting->toArray()))->toBe([
         'id',
         'key',
         'value',

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\RoleEnum;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -13,7 +14,6 @@ test('setup page can be rendered', function () {
 });
 
 test('setup admin user can be stored', function () {
-    $this->withoutExceptionHandling();
     $response = $this->post(route('setup.store'), [
         'name' => 'Test User',
         'email' => 'test@example.com',
@@ -22,9 +22,10 @@ test('setup admin user can be stored', function () {
     ]);
 
     $user = User::query()->where('email', 'test@example.com')->first();
-    $adminRole = Role::query()->where('name', 'admin')->first();
+    $adminRole = Role::query()->where('name', RoleEnum::ADMIN->value)->first();
     $user->assignRole($adminRole);
     Setting::markSetupCompleted();
+    $user->markEmailAsVerified();
 
     expect($user)->not->toBeNull()
         ->and($user->name)->toBe('Test User')
