@@ -9,13 +9,15 @@ use App\Actions\Users\StoreUserAction;
 use App\Actions\Users\UpdateUserAction;
 use App\Http\Requests\Users\UserCreateRequest;
 use App\Http\Requests\Users\UserUpdateRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 final class UserController
@@ -27,17 +29,35 @@ final class UserController
      *
      * @throws AuthorizationException
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
         $this->authorize('viewAny', User::class);
 
-        $users = User::query()
-            ->with(['roles', 'permissions'])
-            ->latest()
-            ->paginate(10);
+        $search = $request->string('search')->value();
+        $perPage = $request->integer('per_page', 10);
+        $sort = $request->string('sort')->value();
+
+        $users = User::with('roles')
+            ->when($search, function (Builder $query, string $search): void {
+                $query->where(function (Builder $query) use ($search): void {
+                    $query->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            });
+
+        if ($sort) {
+            $direction = 'asc';
+            if (str_starts_with($sort, '-')) {
+                $direction = 'desc';
+                $sort = mb_ltrim($sort, '-');
+            }
+            $users->orderBy($sort, $direction);
+        }
+
+        $users = $users->paginate($perPage);
 
         return Inertia::render('users/index', [
-            'users' => $users,
+            'users' => UserResource::collection($users),
         ]);
     }
 
@@ -51,11 +71,9 @@ final class UserController
         $this->authorize('create', User::class);
 
         $roles = Role::query()->select('id', 'name')->get();
-        $permissions = Permission::query()->select('id', 'name')->get();
 
         return Inertia::render('users/create', [
             'roles' => $roles,
-            'permissions' => $permissions,
         ]);
     }
 
@@ -68,7 +86,7 @@ final class UserController
     {
         $this->authorize('create', User::class);
 
-        /** @var array{name: string, email: string, password: string, role?: string, permissions?: array<string>} $validated */
+        /** @var array{name: string, email: string, password: string, role?: string} $validated */
         $validated = $request->validated();
         $action->handle($validated);
 
@@ -86,12 +104,10 @@ final class UserController
         $this->authorize('update', $user);
 
         $roles = Role::query()->select('id', 'name')->get();
-        $permissions = Permission::query()->select('id', 'name')->get();
 
         return Inertia::render('users/edit', [
             'user' => $user,
             'roles' => $roles,
-            'permissions' => $permissions,
         ]);
     }
 
@@ -104,7 +120,7 @@ final class UserController
     {
         $this->authorize('update', $user);
 
-        /** @var array{name: string, email: string, password?: string, roles?: array<string>, permissions?: array<string>} $validated */
+        /** @var array{name: string, email: string, password?: string, roles?: array<string>} $validated */
         $validated = $request->validated();
         $action->handle($validated, $user);
 

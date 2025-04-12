@@ -12,7 +12,7 @@ final class UpdateUserAction
     /**
      * Handle the action of updating an existing user.
      *
-     * @param  array{name: string, email: string, password?: string, roles?: array<string>, permissions?: array<string>}  $attributes  The attributes for the user.
+     * @param  array{name: string, email: string, password?: string, roles?: array<string>}  $attributes  The attributes for the user.
      * @param  User  $user  The user instance to update.
      */
     public function handle(array $attributes, User $user): User
@@ -29,7 +29,6 @@ final class UpdateUserAction
             $user->update($updatedAttributes);
 
             $user->syncRoles($attributes['roles'] ?? []);
-            $user->syncPermissions($attributes['permissions'] ?? []);
 
             return $user;
         });

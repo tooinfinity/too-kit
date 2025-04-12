@@ -5,7 +5,7 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { useTranslation } from '@/hooks/use-translation';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, SettingsIcon, ShieldIcon, UsersIcon } from 'lucide-react';
 import { useMemo } from 'react';
 import AppLogo from './app-logo';
 
@@ -18,6 +18,26 @@ export function AppSidebar() {
                 title: __('Dashboard'),
                 href: '/dashboard',
                 icon: LayoutGrid,
+            },
+            {
+                title: __('Users'),
+                href: '/users',
+                icon: UsersIcon,
+            },
+            {
+                title: __('Roles'),
+                href: '/roles',
+                icon: ShieldIcon,
+            },
+            {
+                title: __('Permissions'),
+                href: '/permissions',
+                icon: ShieldIcon,
+            },
+            {
+                title: __('Settings'),
+                href: '/settings',
+                icon: SettingsIcon,
             },
         ],
         [__],

@@ -12,7 +12,7 @@ final class StoreUserAction
     /**
      * Handle the action of creating a new user.
      *
-     * @param  array{name: string, email: string, password: string, roles?: array<string>, permissions?: array<string>}  $attributes  The attributes for the new user.
+     * @param  array{name: string, email: string, password: string, roles?: array<string>}  $attributes  The attributes for the new user.
      */
     public function handle(array $attributes): User
     {
@@ -26,10 +26,6 @@ final class StoreUserAction
 
             if (! empty($attributes['roles'])) {
                 $user->syncRoles($attributes['roles']);
-            }
-
-            if (! empty($attributes['permissions'])) {
-                $user->syncPermissions($attributes['permissions']);
             }
 
             return $user;

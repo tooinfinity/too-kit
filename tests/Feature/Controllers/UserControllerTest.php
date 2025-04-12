@@ -31,6 +31,19 @@ test('users edit page can be rendered', function () {
     $response->assertStatus(200);
 });
 
+test('index page can be filtered by name', function () {
+    $user = User::factory()->create(['name' => 'John Doe']);
+    $response = $this->get(route('users.index', ['search' => 'John']));
+    $response->assertSee($user->name);
+});
+
+test('index page can be sorted descending by name', function () {
+    $user1 = User::factory()->create(['name' => 'Alice']);
+    $user2 = User::factory()->create(['name' => 'Bob']);
+    $response = $this->get(route('users.index', ['sort' => '-name']));
+    $response->assertSeeInOrder([$user2->name, $user1->name]);
+});
+
 test('admin can store a new user', function () {
 
     $response = $this->post(route('users.store'), [
@@ -39,7 +52,6 @@ test('admin can store a new user', function () {
         'password' => 'password',
         'password_confirmation' => 'password',
         'roles' => ['admin'],
-        'permissions' => ['view users'],
     ]);
     $response->assertRedirect(route('users.index'));
     $user = User::query()->where('email', 'new_email@example.com')->first();
@@ -47,8 +59,7 @@ test('admin can store a new user', function () {
         ->and($user->name)->toBe('new user')
         ->and($user->email)->toBe('new_email@example.com')
         ->and(Hash::check('password', $user->password))->toBeTrue()
-        ->and($user->hasRole(['admin']))->toBeTrue()
-        ->and($user->hasPermissionTo('view users'))->toBeTrue();
+        ->and($user->hasRole(['admin']))->toBeTrue();
 });
 
 test('admin can update a user', function () {
@@ -60,11 +71,14 @@ test('admin can update a user', function () {
         'password' => 'password',
         'password_confirmation' => 'password',
         'roles' => ['admin'],
-        'permissions' => ['view users'],
     ]);
     $response->assertRedirect(route('users.index'));
     $user->refresh();
-    expect($user->email)->toBe('updated_email@example.com');
+    expect($user)->not()->toBeNull()
+        ->and($user->name)->toBe('updated user')
+        ->and($user->email)->toBe('updated_email@example.com')
+        ->and(Hash::check('password', $user->password))->toBeTrue()
+        ->and($user->hasRole(['admin']))->toBeTrue();
 });
 
 test('admin can delete a user', function () {

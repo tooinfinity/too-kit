@@ -14,6 +14,8 @@ final class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\User::factory(10)->administrator()->create();
+        \App\Models\User::factory(10)->manager()->create();
+        \App\Models\User::factory(10)->cashier()->create();
     }
 }

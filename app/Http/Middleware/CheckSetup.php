@@ -22,11 +22,13 @@ final class CheckSetup
             return $next($request);
         }
 
-        if (! Setting::setupCompleted() && ! $request->routeIs('setup*')) {
+        $isSetupCompleted = Setting::setupCompleted();
+
+        if (! $isSetupCompleted && ! $request->routeIs('setup*')) {
             return redirect()->route('setup.index');
         }
 
-        if (Setting::setupCompleted() && $request->routeIs('setup*')) {
+        if ($isSetupCompleted && $request->routeIs('setup*')) {
             return redirect()->route('login');
         }
 

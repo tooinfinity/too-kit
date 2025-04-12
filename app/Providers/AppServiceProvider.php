@@ -30,6 +30,7 @@ final class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->configureRelation();
         $this->configureResource();
         $this->configureCommands();
         $this->configureModels();
@@ -38,6 +39,17 @@ final class AppServiceProvider extends ServiceProvider
         $this->configureVite();
     }
 
+    /**
+     * automate eager loading for relations
+     */
+    private function configureRelation(): void
+    {
+        Model::automaticallyEagerLoadRelationships();
+    }
+
+    /**
+     * disable wrapping from json resource
+     */
     private function configureResource(): void
     {
         JsonResource::withoutWrapping();
