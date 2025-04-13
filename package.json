@@ -51,10 +51,12 @@
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
         "react-hot-toast": "^2.5.2",
+        "sonner": "^2.0.3",
         "tailwind-merge": "^3.0.1",
         "tailwindcss": "^4.0.0",
         "tailwindcss-animate": "^1.0.7",
         "typescript": "^5.7.2",
+        "use-debounce": "^10.0.4",
         "vite": "^6.0"
     },
     "optionalDependencies": {

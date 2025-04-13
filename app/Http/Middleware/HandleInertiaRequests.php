@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
-use App\Http\Resources\UserResource;
+use App\Http\Resources\AuthResource;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
@@ -73,7 +73,7 @@ final class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'name' => config('app.name'),
             'auth' => [
-                'user' => $request->user() ? new UserResource($request->user()) : null,
+                'user' => $request->user() ? new AuthResource($request->user()) : null,
             ],
             'locale' => $currentLocale,
             'locales' => $locales,

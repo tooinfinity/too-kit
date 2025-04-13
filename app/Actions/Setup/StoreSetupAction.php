@@ -24,8 +24,8 @@ final class StoreSetupAction
             $user->markEmailAsVerified();
 
             $adminRole = Role::create(['name' => RoleEnum::ADMIN->value]);
-            $managerRole = Role::create(['name' => RoleEnum::MANAGER->value]);
-            $cashierRole = Role::create(['name' => RoleEnum::CASHIER->value]);
+            Role::create(['name' => RoleEnum::MANAGER->value]);
+            Role::create(['name' => RoleEnum::CASHIER->value]);
             $permissions = PermissionEnum::toArray();
 
             foreach ($permissions as $permission) {
@@ -34,7 +34,6 @@ final class StoreSetupAction
 
             $adminRole->givePermissionTo(Permission::all());
             $user->assignRole($adminRole);
-            $user->syncPermissions(Permission::all());
 
             Setting::markSetupCompleted();
         });

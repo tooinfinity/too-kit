@@ -33,7 +33,7 @@ export default function ColumnHeader<TData, TValue>({ column, title, className }
                         Desc
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => column.toggleSorting(false)}>
+                    <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
                         <ChevronsUpDown className="text-muted-foreground/70 h-3.5 w-3.5" />
                         Hide
                     </DropdownMenuItem>

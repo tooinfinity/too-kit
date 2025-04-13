@@ -54,10 +54,13 @@ final class UserController
             $users->orderBy($sort, $direction);
         }
 
-        $users = $users->paginate($perPage);
+        $users = $users->paginate($perPage)->withQueryString();
 
         return Inertia::render('users/index', [
             'users' => UserResource::collection($users),
+            'filters' => [
+                'search' => $search,
+            ],
         ]);
     }
 

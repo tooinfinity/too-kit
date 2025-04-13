@@ -12,7 +12,7 @@ use Override;
 /**
  * @mixin User
  */
-final class UserResource extends JsonResource
+final class AuthResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -31,7 +31,11 @@ final class UserResource extends JsonResource
                 fn () => $this->roles->pluck('name')->toArray(),
                 $this->getRoleNames()->toArray()
             ),
-            'created_at' => $this->created_at->format('Y-m-d'),
+            'permissions' => $this->when(
+                $this->relationLoaded('permissions'),
+                fn () => $this->permissions->pluck('name')->toArray(),
+                $this->getPermissionNames()->toArray()
+            ),
         ];
     }
 }
